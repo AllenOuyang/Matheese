@@ -1,3 +1,4 @@
+from tasks.task_four import TaskFour
 from tasks.task_one import TaskOne
 from tasks.task_three import TaskThree
 from tasks.task_two import TaskTwo
@@ -14,5 +15,7 @@ class TaskFactory():
             return TaskTwo()
         elif alg_name == 'Task3':
             return TaskThree()
+        elif alg_name == 'Task4':
+            return TaskFour()
         else:
             pass

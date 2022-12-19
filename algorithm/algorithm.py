@@ -105,6 +105,7 @@ def grad(F, GradF, x, d=0.5, tol=1.e-10):
         F0 = F1
     print('Gradient method did not converge (500 iterations)')
 
+
 def decLU(A):
     """
     Returns the decompositon LU f o r matrix A.
@@ -116,8 +117,9 @@ def decLU(A):
             if LU[i, j] != 0:
                 u = LU[i, j] / LU[j, j]
                 LU[i, j+1: n] = LU[i, j+1: n] - u * LU[j, j+1:n]
-                LU[i,j] = u
+                LU[i, j] = u
     return LU
+
 
 def solveLU(A, f):
     """
@@ -134,6 +136,7 @@ def solveLU(A, f):
     for i in range(n-1, -1, -1):
         x[i] = (x[i] - np.dot(LU[i, i+1: n], x[i+1: n])) / LU[i, i]
     return x
+
 
 def cg(A, f, tol=1.0e-9):
     """
@@ -160,6 +163,7 @@ def cg(A, f, tol=1.0e-9):
             s = r + beta * s
     return x, k
 
+
 def fredholm(k, f, a, b, n):
     """
     Solution Fredholm integral equation of the second kind. k(x,s) is the kernel of the integral equation,
@@ -179,6 +183,7 @@ def fredholm(k, f, a, b, n):
         r[i] = f(x)
     y = solveLU(A, r)
     return y
+
 
 def fredholm1(k, f, a, b, n, tol=1.0e-9):
     """
@@ -205,6 +210,38 @@ def fredholm1(k, f, a, b, n, tol=1.0e-9):
             A[i, j] = np.dot(B[i, 0: n], B[0: n, j])
     y, iter = cg(A, r, tol=tol)
     return y, iter
+
+
+def CubicSpline(x, y, bc_type, n=10, xn=[], a=[], xd=[]):
+    h = np.zeros(n-1)
+    alpha = np.zeros(n-1)
+    l = np.zeros(n+1)
+    u = np.zeros(n)
+    z = np.zeros(n+1)
+    b = np.zeros(n)
+    c = np.zeros(n+1)
+    d = np.zeros(n)
+    for i in range(n-1):
+        h[i] = xn[i+1]-xn[i]
+    for i in range(1, n-1):
+        alpha[i] = (3./h[i])*(a[i+1]-a[i])-(3./h[i-1])*(a[i] - a[i-1])
+    l[0] = 1
+    u[0] = 0
+    z[0] = 0
+
+    for i in range(1, n-1):
+        l[i] = 2*(xn[i+1] - xn[i-1]) - h[i-1]*u[i-1]
+        u[i] = h[i]/l[i]
+        z[i] = (alpha[i] - h[i-1]*z[i-1])/l[i]
+    l[n] = 1
+    z[n] = 0
+    c[n] = 0
+    for j in range(n-2, -1, -1):
+        c[j] = z[j] - u[j]*c[j+1]
+        b[j] = (a[j+1] - a[j])/h[j] - h[j]*(c[j+1] + 2*c[j])/3.
+        d[j] = (c[j+1] - c[j])/(3*h[j])
+    for j in range(n-1):
+        return lambda x: (a[j] + b[j]*(xd - x) + c[j]*((xd - x)**2) + d[j]*((xd - x)**3))
 
 
 if __name__ == '__main__':

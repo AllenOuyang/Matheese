@@ -22,17 +22,25 @@ class TaskThree(Task):
                             '1 / (pi * (1 + (x - s) ** 2))', '0.1 / (0.1**2 + (x - s) ** 2)']
         
 
-    def getData(self, f, interval, protype, i):
+    def getData(self, f, interval, protype, i, k_):
         try:
             self.f = lambda x: eval(f)
             self.interval = eval(interval)
             self.protype = protype
             if self.protype == 1:
-                self.K = lambda x, s: eval(self.kernels1[i])
-                K = self.kernels1[i]
+                if i <= 5:
+                    self.K = lambda x, s: eval(self.kernels1[i])
+                    K = self.kernels1[i]
+                else:
+                    self.K = lambda x, s: eval(k_)
+                    K = k_
             elif self.protype == 2:
-                self.K = lambda x, s: eval(self.kernels2[i])
-                K = self.kernels2[i]
+                if i <= 5:
+                    self.K = lambda x, s: eval(self.kernels2[i])
+                    K = self.kernels2[i]
+                else:
+                    self.K = lambda x, s: eval(k_)
+                    K = k_
             x = sy.Symbol('x')
             s = sy.Symbol('s')
             sy.preview(sy.simplify(f), output='png', viewer='file', filename='formula/task3_rhs.png', dvioptions=["-bg", "Transparent"])

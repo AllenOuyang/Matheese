@@ -17,6 +17,7 @@ class Matheese:
         self.window_task1 = None
         self.window_task2 = None
         self.window_task3 = None
+        self.window_task4 = None
         self.solver = None
 
     @Slot()
@@ -29,6 +30,8 @@ class Matheese:
             self.Task2()
         elif tab_name == 'Task3':
             self.Task3()
+        elif tab_name == 'Task4':
+            self.Task4()
 
     def Task1(self):
         f = self.ui.function1.text().replace('^', '**')
@@ -82,7 +85,8 @@ class Matheese:
             f = self.ui.rightpart1.text().replace('^', '**')
             interval = self.ui.interval1.text()
             i = self.ui.comboBox1.currentIndex()
-            self.solver.getData(f, interval, 1, i)
+            s = self.ui.comboBox1.currentText()
+            self.solver.getData(f, interval, 1, i, s)
             if self.solver.check():
                 res = self.solver.execute()
                 self.window_task3 = QUiLoader().load('userinterfaces/task3.ui')
@@ -93,13 +97,14 @@ class Matheese:
                 self.window_task3.KKK.setPixmap(pixmap2)
                 self.window_task3.label.setPixmap(pixmap)
                 self.window_task3.show()
-            else:
+            else: 
                 QMessageBox.about(self.ui, 'result', 'error')
         elif name_tab == 'Type2':
             f = self.ui.rightpart2.text()
             interval = self.ui.interval2.text()
             i = self.ui.comboBox2.currentIndex()
-            self.solver.getData(f, interval, 2, i)
+            s = self.ui.comboBox2.currentText()
+            self.solver.getData(f, interval, 2, i, s)
             if self.solver.check():
                 res = self.solver.execute()
                 self.window_task3 = QUiLoader().load('userinterfaces/task3.ui')
@@ -114,6 +119,20 @@ class Matheese:
                 QMessageBox.about(self.ui, 'result', 'error')
         else:
             pass
+
+    
+    def Task4(self):
+        filename = self.ui.filename.text()
+        self.solver.getData(filename)
+        if self.solver.check():
+            res = self.solver.execute()
+            self.window_task4 = QUiLoader().load('userinterfaces/task4.ui')
+            pixmap = QPixmap("resource/task4.png")
+            self.window_task4.label.setPixmap(pixmap)
+            self.window_task4.show()
+        else:
+            QMessageBox.about(self.ui, 'result', 'error')
+        QMessageBox.about(self.ui, 'result', 'Output File saved and named "task4out.xlsx".')
         
     # @Slot()
     # def index_changed1(self, i):
